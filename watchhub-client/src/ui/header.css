@@ -1,0 +1,42 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: black;
+    padding: 10px 30px 10px 10px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+.logo-container {
+    flex: 0 0 25%;
+    display: flex;
+    justify-content: center;
+}
+
+.title-container {
+    flex: 0 0 50%;
+    display: flex;
+    justify-content: center;
+}
+
+.title {
+    font-size: 4rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #ff6a00, #ff2b00);
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 3px rgba(255, 106, 0, 0.8), 0 0 10px rgba(255, 106, 0, 0.7), 0 0 15px rgba(255, 106, 0, 0.6);
+    margin: 0;
+}
+
+.auth-buttons {
+    flex: 0 0 25%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.custom-logo {
+    width: 150px;
+    height: 150px;
+}
