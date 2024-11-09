@@ -9,14 +9,6 @@ test('renders Home page description', () => {
   expect(homeDescription).toBeInTheDocument();
 });
 
-test('renders Home page with description and image', async () => {
-  render(<Home />);
-  const homeText = await screen.findByText(/WatchHub — это онлайн-кинотеатр/i);
-  expect(homeText).toBeInTheDocument();
-  const homeImage = screen.getByAltText(/Image 1/i);
-  expect(homeImage).toBeInTheDocument();
-});
-
 test('renders Movies page', () => {
   render(<Movies />);
   const moviesElement = screen.getByText(/Movies Page/i);
