@@ -7,11 +7,16 @@ import Profile from './pages/Profile';
 import Header from "./modules/Header";
 import Sidebar from "./components/Sidebar";
 import Preloader from "./components/Preloader";
+import AuthModal from "./modules/auth/AuthModal"
 
 const App = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(() => {
+        const savedAuthStatus = localStorage.getItem('isAuthenticated');
+        return savedAuthStatus === 'true';
+    });
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     useEffect(() => {
         setTimeout(() => {
@@ -21,13 +26,17 @@ const App = () => {
 
     const handleAuthChange = (status) => {
         setIsAuthenticated(status);
+        setShowAuthModal(false);
+        localStorage.setItem('isAuthenticated', status);
     };
 
     const handleSidebarToggle = () => {
-        console.log(`${isSidebarOpen}`);
-
         setIsSidebarOpen(!isSidebarOpen);
     };
+
+    const handleShowAuthModal = () => {
+        setShowAuthModal(true);
+    }
 
     return (
         <Router>
@@ -38,6 +47,7 @@ const App = () => {
                     <Header
                         isAuthenticated={isAuthenticated}
                         onAuthChange={handleAuthChange}
+                        onShowAuthModal={handleShowAuthModal}
                         onSidebarToggle={handleSidebarToggle}
                     />
                     <Sidebar isOpen={isSidebarOpen} isAuthenticated={isAuthenticated} />
@@ -48,6 +58,11 @@ const App = () => {
                             <Route path="/profile" element={<Profile />} />
                         </Routes>
                     </div>
+                    <AuthModal
+                        show={showAuthModal}
+                        onHide={() => setShowAuthModal(false)}
+                        onAuthSuccess={() => handleAuthChange(true)}
+                    />
                 </div>
             )}
         </Router>
