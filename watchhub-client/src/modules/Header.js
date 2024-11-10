@@ -4,7 +4,7 @@ import "../ui/header.css";
 import { Image } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 
-const Header = ({ isAuthenticated, onAuthChange, onSidebarToggle }) => {
+const Header = ({ isAuthenticated, onAuthChange, onShowAuthModal, onSidebarToggle }) => {
     return (
         <header className="header">
             <div className="logo-container">
@@ -16,7 +16,7 @@ const Header = ({ isAuthenticated, onAuthChange, onSidebarToggle }) => {
             </div>
 
             <div className="auth-buttons">
-                <AuthButtons isAuthenticated={isAuthenticated} onAuthChange={onAuthChange} />
+                <AuthButtons isAuthenticated={isAuthenticated} onAuthChange={onAuthChange} onShowAuthModal={onShowAuthModal}  />
                 <Button variant="outline-light" onClick={onSidebarToggle}>
                     Меню
                 </Button>
