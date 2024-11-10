@@ -7,7 +7,8 @@ import Profile from './pages/Profile';
 import Header from "./modules/Header";
 import Sidebar from "./components/Sidebar";
 import Preloader from "./components/Preloader";
-import AuthModal from "./modules/auth/AuthModal"
+import AuthModal from "./modules/auth/AuthModal";
+import Movie from "./pages/Movie";
 
 const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -56,6 +57,7 @@ const App = () => {
                             <Route path="/" element={<Home />} />
                             <Route path="/movies" element={<Movies />} />
                             <Route path="/profile" element={<Profile />} />
+                            <Route path="/movie/:id" element={<Movie />} />
                         </Routes>
                     </div>
                     <AuthModal
