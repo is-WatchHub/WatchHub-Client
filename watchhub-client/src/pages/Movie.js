@@ -46,7 +46,7 @@ const Movie = () => {
     }, [id]);
 
     if (loading) return (
-        <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="d-flex justify-content-center align-items-center" style={{ height: '77vh' }}>
             <Spinner animation="border" variant="light" />
         </div>
     );
