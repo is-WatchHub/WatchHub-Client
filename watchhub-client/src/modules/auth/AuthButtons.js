@@ -1,14 +1,15 @@
 import React from 'react';
 import AuthButton from "../../components/auth/AuthButton";
 
-const AuthButtons = ({ isAuthenticated, onAuthChange }) => {
+const AuthButtons = ({ isAuthenticated, onAuthChange, onShowAuthModal }) => {
     const handleAuthAction = () => {
         const newAuthStatus = !isAuthenticated;
-        onAuthChange(newAuthStatus);
 
         if (newAuthStatus) {
+            onShowAuthModal(true);
             console.log("Redirecting to sign in...");
         } else {
+            onAuthChange(newAuthStatus);
             console.log("Signing out...");
         }
     };
