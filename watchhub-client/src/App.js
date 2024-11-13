@@ -20,6 +20,17 @@ const App = () => {
     const [showAuthModal, setShowAuthModal] = useState(false);
 
     useEffect(() => {
+        window.onerror = function (message, source, lineno, colno, error) {
+            console.error(`Error occurred: ${message} at ${source}:${lineno}:${colno}`);
+            alert('Произошла ошибка. Попробуйте перезагрузить страницу.');
+            return true;
+        };
+
+        window.addEventListener('unhandledrejection', function (event) {
+            console.error(`Unhandled promise rejection: ${event.reason}`);
+            alert('Произошла ошибка при обработке запроса.');
+        });
+
         setTimeout(() => {
             setLoading(false);
         }, 2000);
