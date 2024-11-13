@@ -24,7 +24,7 @@ const Sidebar = ({ isOpen, isAuthenticated }) => {
                 </Nav.Item>
                 {isAuthenticated && (
                     <Nav.Item>
-                        <Link to="/profile" className="custom-nav-link nav-link">Профиль пользователя</Link>
+                        <Link to="/profile" className="custom-nav-link nav-link">Профиль</Link>
                     </Nav.Item>
                 )}
             </Nav>
