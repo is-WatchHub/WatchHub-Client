@@ -5,28 +5,6 @@ import ReactPlayer from 'react-player';
 import Button from "react-bootstrap/Button";
 import "../ui/accordition.css"
 
-const mockFullResponseMovieDto = {
-    id: '1',
-    title: 'Бладшот',
-    description: 'This is a mock description of the movie. It provides a brief overview of the storyline.',
-    genre: 'Drama',
-    contentUrl: 'https://www.youtube.com/watch?v=DK5rpTF683A',
-    coverImageUrl: 'https://m.media-amazon.com/images/M/MV5BNDFjMTI4ZTQtYzNlNS00YmJiLWEyYzYtYWFiYTZjOTI5MDM1XkEyXkFqcGc@._V1_QL75_UY562_CR35,0,380,562_.jpg 380w',
-};
-
-const mockMovieInformationDto = {
-    director: 'Mock Director',
-    rating: {
-        aggregatedValue: 4.5,
-        ratings: [
-            { service: 'IMDB', rating: 4.6 },
-            { service: 'Rotten Tomatoes', rating: 4.4 },
-        ],
-    },
-    actorNames: ['Actor One', 'Actor Two', 'Actor Three'],
-    awardTitles: ['Best Picture 2022', 'Audience Choice Award'],
-};
-
 const Movie = () => {
     const { id } = useParams();
     const [movie, setMovie] = useState(null);
@@ -34,15 +12,44 @@ const Movie = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchMockData = () => {
-            setTimeout(() => {
-                setMovie(mockFullResponseMovieDto);
-                setMovieInfo(mockMovieInformationDto);
+        const fetchData = async () => {
+            try {
+                const movieResponse = await fetch(`https://watchhub-jjji.onrender.com/api/movies/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'accept': '*/*',
+                    },
+                });
+
+                if (!movieResponse.ok) {
+                    throw new Error('Failed to fetch movie data');
+                }
+
+                const movieData = await movieResponse.json();
+                setMovie(movieData);
+
+                const movieInfoResponse = await fetch(`https://watchhub-jjji.onrender.com/api/integrations/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'accept': '*/*',
+                    },
+                });
+
+                if (!movieInfoResponse.ok) {
+                    throw new Error('Failed to fetch movie information');
+                }
+
+                const movieInfoData = await movieInfoResponse.json();
+                setMovieInfo(movieInfoData);
+
                 setLoading(false);
-            }, 1000);
+            } catch (error) {
+                console.error(error);
+                setLoading(false);
+            }
         };
 
-        fetchMockData();
+        fetchData();
     }, [id]);
 
     if (loading) return (
@@ -75,28 +82,40 @@ const Movie = () => {
                                 </Button>
                             </Accordion.Header>
                             <Accordion.Body style={{ color: 'white' }}>
-                                <p><strong>Режисер:</strong> {movieInfo.director}</p>
+                                <p><strong>Режисер:</strong> {movieInfo?.director || 'Не указано'}</p>
                                 <h4>Рейтинг</h4>
-                                <p>Агрегированное значение: {movieInfo.rating.aggregatedValue}</p>
-                                <ul>
-                                    {movieInfo.rating.ratings.map((serviceRating, index) => (
-                                        <li key={index} style={{ color: 'white' }}>
-                                            {serviceRating.service}: {serviceRating.rating}
-                                        </li>
-                                    ))}
-                                </ul>
+                                <p>Агрегированное значение: {movieInfo?.rating?.aggregatedValue || 'Не доступно'}</p>
+                                {movieInfo?.rating?.ratings && movieInfo.rating.ratings.length > 0 ? (
+                                    <ul>
+                                        {movieInfo.rating.ratings.map((serviceRating, index) => (
+                                            <li key={index} style={{ color: 'white' }}>
+                                                {serviceRating.service}: {serviceRating.rating}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p style={{ color: 'white' }}>Рейтинги не доступны</p>
+                                )}
                                 <h4>Актеры</h4>
-                                <ul>
-                                    {movieInfo.actorNames.map((actor, index) => (
-                                        <li key={index} style={{ color: 'white' }}>{actor}</li>
-                                    ))}
-                                </ul>
+                                {movieInfo?.actorNames?.length > 0 ? (
+                                    <ul>
+                                        {movieInfo.actorNames.map((actor, index) => (
+                                            <li key={index} style={{ color: 'white' }}>{actor}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p style={{ color: 'white' }}>Актеры не указаны</p>
+                                )}
                                 <h4>Награды</h4>
-                                <ul>
-                                    {movieInfo.awardTitles.map((award, index) => (
-                                        <li key={index} style={{ color: 'white' }}>{award}</li>
-                                    ))}
-                                </ul>
+                                {movieInfo?.awardTitles?.length > 0 ? (
+                                    <ul>
+                                        {movieInfo.awardTitles.map((award, index) => (
+                                            <li key={index} style={{ color: 'white' }}>{award}</li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p style={{ color: 'white' }}>Награды не указаны</p>
+                                )}
                             </Accordion.Body>
                         </Card>
                     </Accordion>
