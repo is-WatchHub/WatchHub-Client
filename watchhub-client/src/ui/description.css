@@ -19,9 +19,6 @@
     }
 
     .description-text {
-        margin-bottom: 16px;
-        line-height: 1.4;
         font-size: 1rem;
-        font-weight: 600;
     }
 }
