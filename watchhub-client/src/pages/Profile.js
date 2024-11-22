@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Card, Spinner } from 'react-bootstrap';
+import {fetchUser} from "../components/requests/fetchUser";
 
 const Profile = () => {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
-        setTimeout(() => {
-            const mockUserData = {
-                username: 'john_doe',
-                email: 'john.doe@example.com',
-                role: 'user'
-            };
-            setUserData(mockUserData);
-            setLoading(false);
-        }, 2000);
+        const username = localStorage.getItem('username');
+        setLoading(true);
+        fetchUser(username)
+            .then((data) => {
+                setUserData(data);
+            })
+            .catch((err) => {
+                setError(true);
+                console.error(err);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }, []);
 
     if (loading) {
@@ -22,6 +28,18 @@ const Profile = () => {
             <div className="d-flex justify-content-center align-items-center" style={{ height: '77vh' }}>
                 <Spinner animation="border" variant="light" />
             </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <Container fluid className="d-flex justify-content-center align-items-center" style={{ height: '77vh' }}>
+                <Row>
+                    <Col>
+                        <div className="text-center text-danger">{'Ошибка при загрузке данных пользователя'}</div>
+                    </Col>
+                </Row>
+            </Container>
         );
     }
 
@@ -34,7 +52,7 @@ const Profile = () => {
                             <Card.Title className="text-center">Профиль</Card.Title>
                             <Row>
                                 <Col md={12} className="mb-3">
-                                    <strong>Имя пользователя:</strong> {userData.username}
+                                    <strong>Имя пользователя:</strong> {userData.userName}
                                 </Col>
                                 <Col md={12} className="mb-3">
                                     <strong>Почта:</strong> {userData.email}
@@ -52,4 +70,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

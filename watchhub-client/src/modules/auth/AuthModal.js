@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Form, Button, Alert } from 'react-bootstrap';
+import {fetchRegister} from "../../components/requests/fetchRegister";
+import {fetchLogin} from "../../components/requests/fetchLogin";
 
 const AuthModal = ({ show, onHide, onAuthSuccess }) => {
     const [isLogin, setIsLogin] = useState(true);
@@ -12,7 +14,7 @@ const AuthModal = ({ show, onHide, onAuthSuccess }) => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         const form = e.currentTarget;
         e.preventDefault();
         e.stopPropagation();
@@ -23,29 +25,25 @@ const AuthModal = ({ show, onHide, onAuthSuccess }) => {
         }
 
         setMessage('');
-        const { email, password, login } = formData;
 
-        setTimeout(() => {
+        try {
             if (isLogin) {
-                if (login === 'test11' && password === 'Test123!') {
-                    setMessage('Успешный вход!');
-                    onAuthSuccess();
-                } else {
-                    setMessage('Неверный email или пароль.');
-                }
+                const { login, password } = formData;
+                await fetchLogin(login, password);
+                localStorage.setItem('username', login);
+                setMessage('Успешный вход!');
+                onAuthSuccess();
             } else {
-                if (email === 'existing@example.com') {
-                    setMessage('Пользователь с таким email уже существует.');
-                } else if (password.length < 6) {
-                    setMessage('Пароль слишком короткий.');
-                } else if (!/^[a-zA-Z0-9_]{4,20}$/.test(login)) {
-                    setMessage('Неверный формат логина.');
-                } else {
-                    setMessage('Регистрация успешна!');
-                    onAuthSuccess();
-                }
+                const { email, password, login } = formData;
+                await fetchRegister(login, email, password);
+                await fetchLogin(login, password);
+                localStorage.setItem('username', login);
+                setMessage('Регистрация успешна!');
+                onAuthSuccess();
             }
-        }, 1000);
+        } catch (error) {
+            setMessage(error.message);
+        }
     };
 
     return (

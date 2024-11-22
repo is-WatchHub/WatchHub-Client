@@ -1,36 +1,28 @@
 import React, {useEffect, useState} from 'react';
-import {Col, Container, Row, Spinner} from "react-bootstrap";
+import {Alert, Col, Container, Row, Spinner} from "react-bootstrap";
 import MovieCard from "../components/MovieCard";
+import {fetchMovies} from "../components/requests/fetchMovies";
 
 
 const Movies = ({ isAuthenticated }) => {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
-
-    const fetchMovies = async () => {
-        try {
-            const response = await fetch('https://watchhub-jjji.onrender.com/api/movies', {
-                method: 'GET',
-                headers: {
-                    'Accept': '*/*'
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Ошибка при получении фильмов');
-            }
-
-            const data = await response.json();
-            setMovies(data);
-        } catch (error) {
-            console.error('Ошибка:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetchMovies();
+        const getMovies = async () => {
+            try {
+                const data = await fetchMovies();
+                setMovies(data);
+            } catch (error) {
+                console.error('Ошибка:', error);
+                setError('Не удалось загрузить список фильмов. Попробуйте позже.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getMovies();
     }, []);
 
     if (loading) {
@@ -38,6 +30,26 @@ const Movies = ({ isAuthenticated }) => {
             <div className="d-flex justify-content-center align-items-center" style={{ height: '77vh' }}>
                 <Spinner animation="border" variant="light" />
             </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <Container className="d-flex justify-content-center align-items-center" style={{ height: '77vh' }}>
+                <Alert variant="danger" className="text-center">
+                    {error}
+                </Alert>
+            </Container>
+        );
+    }
+
+    if (movies.length === 0) {
+        return (
+            <Container className="d-flex justify-content-center align-items-center" style={{ height: '77vh' }}>
+                <Alert variant="warning" className="text-center">
+                    Фильмы не найдены.
+                </Alert>
+            </Container>
         );
     }
 

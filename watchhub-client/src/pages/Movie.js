@@ -4,60 +4,52 @@ import {Container, Row, Col, Accordion, Card, Spinner} from 'react-bootstrap';
 import ReactPlayer from 'react-player';
 import Button from "react-bootstrap/Button";
 import "../ui/accordition.css"
+import {fetchMovieInfo} from "../components/requests/fetchMovieInfo";
+import {fetchMovie} from "../components/requests/fetchMovie";
 
 const Movie = () => {
     const { id } = useParams();
     const [movie, setMovie] = useState(null);
     const [movieInfo, setMovieInfo] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loadingMovie, setLoadingMovie] = useState(true);
+    const [loadingMovieInfo, setLoadingMovieInfo] = useState(true);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const loadMovie = async () => {
             try {
-                const movieResponse = await fetch(`https://watchhub-jjji.onrender.com/api/movies/${id}`, {
-                    method: 'GET',
-                    headers: {
-                        'accept': '*/*',
-                    },
-                });
-
-                if (!movieResponse.ok) {
-                    throw new Error('Failed to fetch movie data');
-                }
-
-                const movieData = await movieResponse.json();
-                setMovie(movieData);
-
-                const movieInfoResponse = await fetch(`https://watchhub-jjji.onrender.com/api/integrations/${id}`, {
-                    method: 'GET',
-                    headers: {
-                        'accept': '*/*',
-                    },
-                });
-
-                if (!movieInfoResponse.ok) {
-                    throw new Error('Failed to fetch movie information');
-                }
-
-                const movieInfoData = await movieInfoResponse.json();
-                setMovieInfo(movieInfoData);
-
-                setLoading(false);
+                const data = await fetchMovie(id);
+                setMovie(data);
             } catch (error) {
-                console.error(error);
-                setLoading(false);
+                console.error('Failed to fetch movie:', error);
+            } finally {
+                setLoadingMovie(false);
             }
         };
 
-        fetchData();
+        const loadMovieInfo = async () => {
+            try {
+                const data = await fetchMovieInfo(id);
+                setMovieInfo(data);
+            } catch (error) {
+                console.error('Failed to fetch movie information:', error);
+            } finally {
+                setLoadingMovieInfo(false);
+            }
+        };
+
+        loadMovie();
+        loadMovieInfo();
     }, [id]);
 
-    if (loading) return (
-        <div className="d-flex justify-content-center align-items-center" style={{ height: '77vh' }}>
-            <Spinner animation="border" variant="light" />
-        </div>
-    );
-    if (!movie || !movieInfo) return <div>Movie data not found.</div>;
+    if (loadingMovie || loadingMovieInfo) {
+        return (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: '77vh' }}>
+                <Spinner animation="border" variant="light" />
+            </div>
+        );
+    }
+
+    if (!movie) return <div>Movie data not found.</div>;
 
     return (
         <Container>
@@ -107,15 +99,7 @@ const Movie = () => {
                                     <p style={{ color: 'white' }}>Актеры не указаны</p>
                                 )}
                                 <h4>Награды</h4>
-                                {movieInfo?.awardTitles?.length > 0 ? (
-                                    <ul>
-                                        {movieInfo.awardTitles.map((award, index) => (
-                                            <li key={index} style={{ color: 'white' }}>{award}</li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p style={{ color: 'white' }}>Награды не указаны</p>
-                                )}
+                                <p>{movieInfo?.awards || 'Награды не указаны'}</p>
                             </Accordion.Body>
                         </Card>
                     </Accordion>

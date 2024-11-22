@@ -1,8 +1,9 @@
 import React from 'react';
 import AuthButton from "../../components/auth/AuthButton";
+import {fetchLogout} from "../../components/requests/fetchLogout";
 
 const AuthButtons = ({ isAuthenticated, onAuthChange, onShowAuthModal }) => {
-    const handleAuthAction = () => {
+    const handleAuthAction = async () => {
         const newAuthStatus = !isAuthenticated;
 
         if (newAuthStatus) {
@@ -10,6 +11,8 @@ const AuthButtons = ({ isAuthenticated, onAuthChange, onShowAuthModal }) => {
             console.log("Redirecting to sign in...");
         } else {
             onAuthChange(newAuthStatus);
+            localStorage.setItem('username', null);
+            await fetchLogout();
             console.log("Signing out...");
         }
     };
