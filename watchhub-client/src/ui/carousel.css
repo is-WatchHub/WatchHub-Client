@@ -16,14 +16,14 @@
 }
 
 .qr-code-container {
-    flex: 0 0 30%;
+    flex: 0 0 20%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .qr-code-container img {
-    max-height: 300px;
+    max-height: 200px;
     height: auto;
     max-width: 100%;
     object-fit: contain;
