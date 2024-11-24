@@ -1,25 +1,74 @@
-import logo from './logo.svg';
 import './App.css';
+import React, {useEffect, useState} from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home';
+import Movies from './pages/Movies';
+import Profile from './pages/Profile';
+import Header from "./modules/Header";
+import Sidebar from "./components/Sidebar";
+import Preloader from "./components/Preloader";
+import AuthModal from "./modules/auth/AuthModal";
+import Movie from "./pages/Movie";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const App = () => {
+    const [isAuthenticated, setIsAuthenticated] = useState(() => {
+        const savedAuthStatus = localStorage.getItem('isAuthenticated');
+        return savedAuthStatus === 'true';
+    });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setLoading(false);
+        }, 2000);
+    }, []);
+
+    const handleAuthChange = (status) => {
+        setIsAuthenticated(status);
+        setShowAuthModal(false);
+        localStorage.setItem('isAuthenticated', status);
+    };
+
+    const handleSidebarToggle = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+
+    const handleShowAuthModal = () => {
+        setShowAuthModal(true);
+    }
+
+    return (
+        <Router>
+            {loading ? (
+                <Preloader />
+            ) : (
+                <div>
+                    <Header
+                        isAuthenticated={isAuthenticated}
+                        onAuthChange={handleAuthChange}
+                        onShowAuthModal={handleShowAuthModal}
+                        onSidebarToggle={handleSidebarToggle}
+                    />
+                    <Sidebar isOpen={isSidebarOpen} isAuthenticated={isAuthenticated} />
+                    <div className={`content ${isSidebarOpen ? 'shifted' : ''}`}>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/movies" element={<Movies />} />
+                            <Route path="/profile" element={<Profile />} />
+                            <Route path="/movie/:id" element={<Movie />} />
+                        </Routes>
+                    </div>
+                    <AuthModal
+                        show={showAuthModal}
+                        onHide={() => setShowAuthModal(false)}
+                        onAuthSuccess={() => handleAuthChange(true)}
+                    />
+                </div>
+            )}
+        </Router>
+    );
 }
 
 export default App;

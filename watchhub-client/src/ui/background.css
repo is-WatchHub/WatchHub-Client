@@ -1,0 +1,11 @@
+::-webkit-scrollbar {
+    width: 0;
+}
+
+.background {
+    background-color: #1a1a1a;
+    background-image: linear-gradient(135deg, #ff6a00, #feda4f);
+    color: white;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+}

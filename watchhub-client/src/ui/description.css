@@ -1,0 +1,24 @@
+.watchhub-description {
+    margin: 0 auto;
+    padding: 20px;
+    max-width: 60%;
+    color: #2c2828;
+    text-align: center;
+}
+
+.description-text {
+    margin-bottom: 16px;
+    line-height: 1.6;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .watchhub-description {
+        max-width: 100%;
+    }
+
+    .description-text {
+        font-size: 1rem;
+    }
+}
